@@ -78,6 +78,18 @@ Follow the **karpathy-guidelines** skill:
 3. **Surgical changes** - Touch only what you must
 4. **Goal-driven** - Define verifiable success criteria
 
+## Claude Code Skills
+
+Register and use the following skills with `/skill-name`:
+
+| Skill | Purpose |
+|-------|---------|
+| `/karpathy-guidelines` | Coding best practices to reduce mistakes and keep changes surgical |
+| `/verify` | Verify that code changes actually work by running the app |
+| `/code-review` | Review code for quality, efficiency, and reuse issues |
+| `/run` | Launch and drive the application to test changes |
+| `/security-review` | Security review of pending changes on the current branch |
+
 ## Next Steps
 
 - [ ] Set up data ingestion pipeline (PDF/text files)
