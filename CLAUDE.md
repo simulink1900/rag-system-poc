@@ -32,7 +32,8 @@ rag-system-poc/
 
 ### Core LLM & Orchestration
 - **langchain** (1.3.1) - LLM application framework
-- **openai** (2.37.0) - OpenAI API client
+- **litellm** (1.0.0+) - LLM proxy/abstraction layer (OpenRouter, Anthropic, OpenAI, etc.)
+- **langchain-litellm** (0.1.0+) - LangChain integration for LiteLLM
 - **langgraph** (1.2.0) - Stateful graph-based workflows
 
 ### Vector Database & Embeddings
@@ -96,7 +97,8 @@ Follow the **karpathy-guidelines** skill:
 
 Create a `.env` file for local configuration:
 ```
-OPENAI_API_KEY=your_key_here
+LITELLM_MASTER_KEY=your_master_key
+LITELLM_PROXY_URL=http://localhost:8000  # or your LiteLLM proxy URL
 ```
 
 Load with:
