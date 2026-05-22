@@ -77,7 +77,7 @@ def get_or_build_collection(
 ) -> chromadb.Collection:
     """
     Load existing collection if it exists and is complete,
-    otherwise build it from scratch. Detects incomplete collections.
+    otherwise build it from scratch. Detects incomplete collections and rebuilds them.
     """
     client = get_chroma_client(persist_dir)
     if collection_exists(client, collection_name):
@@ -92,10 +92,12 @@ def get_or_build_collection(
             print(f"   Status: Ready to use\n")
             return collection
         else:
-            print(f"\n⚠️  EMBEDDINGS INCOMPLETE - REBUILDING...")
+            print(f"\n⚠️  EMBEDDINGS INCOMPLETE - CLEARING AND REBUILDING...")
             print(f"   Expected: {input_count:,} documents")
             print(f"   Found: {stored_count:,} documents")
-            print(f"   Restarting build...\n")
+            print(f"   Clearing incomplete collection...\n")
+            # Delete the incomplete collection to start fresh
+            client.delete_collection(name=collection_name)
             return build_collection(documents, embeddings, client, collection_name)
     else:
         print(f"\n📝 EMBEDDINGS NOT FOUND - CREATING NEW...")
