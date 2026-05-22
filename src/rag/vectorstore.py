@@ -44,10 +44,11 @@ def build_collection(
     Embed all documents and upsert into ChromaDB in batches.
     Uses upsert so re-running is idempotent.
     """
+    print(f"🔨 Creating embeddings (this takes 3-5 minutes)...")
     collection = client.get_or_create_collection(name=collection_name)
 
     num_batches = (len(documents) + batch_size - 1) // batch_size
-    for batch_idx in tqdm(range(num_batches), desc="Embedding and upserting"):
+    for batch_idx in tqdm(range(num_batches), desc="📦 Embedding and storing"):
         start_idx = batch_idx * batch_size
         end_idx = min((batch_idx + 1) * batch_size, len(documents))
         batch_docs = documents[start_idx:end_idx]
@@ -64,6 +65,7 @@ def build_collection(
             metadatas=batch_metadatas,
         )
 
+    print(f"✅ Embeddings created and saved to {CHROMA_PERSIST_DIR}")
     return collection
 
 
@@ -74,15 +76,29 @@ def get_or_build_collection(
     collection_name: str = COLLECTION_NAME,
 ) -> chromadb.Collection:
     """
-    Load existing collection if it exists and has documents,
-    otherwise build it from scratch.
+    Load existing collection if it exists and is complete,
+    otherwise build it from scratch. Detects incomplete collections.
     """
     client = get_chroma_client(persist_dir)
     if collection_exists(client, collection_name):
-        print(f"✓ Loading existing collection from {persist_dir} (instant)")
         collection = load_collection(client, collection_name)
-        print(f"  Collection has {collection.count()} documents")
-        return collection
+        stored_count = collection.count()
+        input_count = len(documents)
+
+        if stored_count == input_count:
+            print(f"\n📚 EMBEDDINGS LOADED FROM CACHE (instant)")
+            print(f"   Location: {persist_dir}")
+            print(f"   Documents: {stored_count:,}")
+            print(f"   Status: Ready to use\n")
+            return collection
+        else:
+            print(f"\n⚠️  EMBEDDINGS INCOMPLETE - REBUILDING...")
+            print(f"   Expected: {input_count:,} documents")
+            print(f"   Found: {stored_count:,} documents")
+            print(f"   Restarting build...\n")
+            return build_collection(documents, embeddings, client, collection_name)
     else:
-        print(f"⏳ Building new collection (this will take 3-5 minutes)...")
+        print(f"\n📝 EMBEDDINGS NOT FOUND - CREATING NEW...")
+        print(f"   Input: {len(documents):,} documents")
+        print(f"   Location: {persist_dir}\n")
         return build_collection(documents, embeddings, client, collection_name)
