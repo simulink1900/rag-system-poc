@@ -9,6 +9,7 @@ def build_where_clause(
     reviewer_location: str | None = None,
     season: str | None = None,
     min_rating: int | None = None,
+    year_month: str | None = None,
 ) -> dict | None:
     """
     Construct a ChromaDB where-clause dict from optional filter parameters.
@@ -31,6 +32,9 @@ def build_where_clause(
     if min_rating is not None:
         conditions.append({"rating": {"$gte": min_rating}})
 
+    if year_month and year_month.strip():
+        conditions.append({"year_month": {"$eq": year_month}})
+
     if not conditions:
         return None
     elif len(conditions) == 1:
@@ -48,13 +52,14 @@ def retrieve(
     reviewer_location: str | None = None,
     season: str | None = None,
     min_rating: int | None = None,
+    year_month: str | None = None,
 ) -> list[Document]:
     """
     Embed query, call collection.query() with optional where clause,
     return list of Document objects with metadata restored.
     """
     query_embedding = embeddings.embed_query(query)
-    where_clause = build_where_clause(branch, reviewer_location, season, min_rating)
+    where_clause = build_where_clause(branch, reviewer_location, season, min_rating, year_month)
 
     results = collection.query(
         query_embeddings=[query_embedding],

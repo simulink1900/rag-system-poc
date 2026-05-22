@@ -69,6 +69,8 @@ def build_rag_chain(
             branch=filters.get("branch"),
             reviewer_location=filters.get("reviewer_location"),
             season=filters.get("season"),
+            min_rating=filters.get("min_rating"),
+            year_month=filters.get("year_month"),
         )
 
     chain = (
