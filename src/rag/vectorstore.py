@@ -79,6 +79,10 @@ def get_or_build_collection(
     """
     client = get_chroma_client(persist_dir)
     if collection_exists(client, collection_name):
-        return load_collection(client, collection_name)
+        print(f"✓ Loading existing collection from {persist_dir} (instant)")
+        collection = load_collection(client, collection_name)
+        print(f"  Collection has {collection.count()} documents")
+        return collection
     else:
+        print(f"⏳ Building new collection (this will take 3-5 minutes)...")
         return build_collection(documents, embeddings, client, collection_name)
