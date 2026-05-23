@@ -12,7 +12,7 @@ from rag.config import LLM_MODEL_NAME, LLM_TEMPERATURE, LLM_MAX_TOKENS, LLM_TIME
 from rag.filter_parser import extract_filters
 
 # Initialize LLM
-proxy_url = os.getenv("LITELLM_PROXY_URL", "https://litellm.gke-prod.linnovate.net")
+proxy_url = os.getenv("LITELLM_PROXY_URL")
 api_key = os.getenv("LITELLM_MASTER_KEY")
 
 llm = ChatLiteLLM(

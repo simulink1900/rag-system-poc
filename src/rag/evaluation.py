@@ -58,7 +58,7 @@ def evaluate_answer(
     If judge_llm is not provided, creates one using LLMASAJUDGE_MODEL_NAME.
     """
     if judge_llm is None:
-        proxy_url = os.getenv("LITELLM_PROXY_URL", "https://litellm.gke-prod.linnovate.net")
+        proxy_url = os.getenv("LITELLM_PROXY_URL")
         api_key = os.getenv("LITELLM_MASTER_KEY")
         judge_llm = ChatLiteLLM(
             model=LLMASAJUDGE_MODEL_NAME,

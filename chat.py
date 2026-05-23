@@ -39,7 +39,7 @@ def main():
     print(f"    Collection ready: {collection.count()} documents")
 
     print("  • Initializing LLM...")
-    proxy_url = os.getenv("LITELLM_PROXY_URL", "https://litellm.gke-prod.linnovate.net")
+    proxy_url = os.getenv("LITELLM_PROXY_URL")
     api_key = os.getenv("LITELLM_MASTER_KEY")
     llm = ChatLiteLLM(
         model=LLM_MODEL_NAME,

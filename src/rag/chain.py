@@ -143,7 +143,7 @@ def ask(
     context = format_docs(docs)
 
     # Create judge LLM for evaluation
-    proxy_url = os.getenv("LITELLM_PROXY_URL", "https://litellm.gke-prod.linnovate.net")
+    proxy_url = os.getenv("LITELLM_PROXY_URL")
     api_key = os.getenv("LITELLM_MASTER_KEY")
     judge_llm = ChatLiteLLM(
         model=LLMASAJUDGE_MODEL_NAME,
