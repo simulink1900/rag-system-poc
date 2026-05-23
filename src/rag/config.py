@@ -36,3 +36,6 @@ VALID_BRANCHES: set[str] = {
     "Disneyland_HongKong",
     "Disneyland_Paris",
 }
+
+# Evaluation
+EVALUATION_ENABLED: bool = os.getenv("EVALUATION_ENABLED", "true").lower() == "true"

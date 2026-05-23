@@ -9,11 +9,11 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent / "src"))
 
-from rag.config import DATA_PATH, LLM_MODEL_NAME, LLM_TEMPERATURE, LLM_MAX_TOKENS, LLM_TIMEOUT
+from rag.config import DATA_PATH, LLM_MODEL_NAME, LLM_TEMPERATURE, LLM_MAX_TOKENS, LLM_TIMEOUT, EVALUATION_ENABLED
 from rag.ingest import load_reviews
 from rag.embeddings import SentenceTransformerEmbeddings
 from rag.vectorstore import get_or_build_collection
-from rag.chain import ask
+from rag.chain import ask, AnswerWithEvaluation
 from rag.filter_parser import extract_filters
 from langchain_litellm import ChatLiteLLM
 import os
@@ -55,6 +55,7 @@ def main():
 
     print("\n" + "=" * 70)
     print("Ready! Ask questions about Disneyland visitor experiences.")
+    print(f"Evaluation: {'✅ Enabled' if EVALUATION_ENABLED else '❌ Disabled'}")
     print("Examples:")
     print("  • What do visitors from Australia say about Disneyland in HongKong?")
     print("  • Is spring a good time to visit Disneyland?")
@@ -92,11 +93,24 @@ def main():
             print(f"   Year/Month: {filters.get('year_month') or 'any'}")
             print(f"   Prefer Recent: {filters.get('prefer_recent', False)}")
 
-            # Get answer
-            answer = ask(question, collection, embeddings, llm, auto_extract_filters=False, filters=filters)
+            # Get answer (with optional evaluation)
+            result = ask(question, collection, embeddings, llm, auto_extract_filters=False, filters=filters, evaluation=EVALUATION_ENABLED)
 
             print(f"\n✨ Answer:")
-            print(f"{answer}")
+            if isinstance(result, dict) and "answer" in result:
+                answer_text = result["answer"]
+                print(f"{answer_text}")
+
+                # Display evaluation scores
+                if "evaluation" in result:
+                    scores = result["evaluation"]
+                    print(f"\n📊 Evaluation Scores:")
+                    print(f"   Relevance:    {scores['relevance']:.1f}")
+                    print(f"   Conciseness:  {scores['conciseness']:.1f}")
+                    print(f"   Helpfulness:  {scores['helpfulness']:.1f}")
+                    print(f"   Hallucination (↓ = better): {scores['hallucination']:.1f}")
+            else:
+                print(f"{result}")
             print("-" * 70)
 
         except KeyboardInterrupt:

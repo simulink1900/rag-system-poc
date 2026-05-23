@@ -1,4 +1,5 @@
 import chromadb
+from typing import TypedDict
 from langchain_core.documents import Document
 from langchain_core.runnables import RunnablePassthrough, RunnableLambda, RunnableMap, Runnable
 from langchain_core.prompts import ChatPromptTemplate
@@ -7,6 +8,7 @@ from langchain_litellm import ChatLiteLLM
 from .embeddings import SentenceTransformerEmbeddings
 from .retriever import retrieve
 from .filter_parser import extract_filters, ReviewFilters
+from .evaluation import evaluate_answer, EvaluationScores
 from .config import TOP_K_RETRIEVAL
 
 
@@ -24,6 +26,11 @@ Visitor Reviews:
         ("human", "{question}"),
     ]
 )
+
+
+class AnswerWithEvaluation(TypedDict):
+    answer: str
+    evaluation: EvaluationScores
 
 
 def format_docs(documents: list[Document]) -> str:
@@ -97,12 +104,16 @@ def ask(
     auto_extract_filters: bool = True,
     filters: ReviewFilters | None = None,
     n_results: int = TOP_K_RETRIEVAL,
-) -> str:
+    evaluation: bool = False,
+) -> str | AnswerWithEvaluation:
     """
     Ask a question and get an answer.
 
     If auto_extract_filters=True, uses LLM to extract filters from the question.
     Otherwise uses the provided filters dict (or empty if None).
+
+    If evaluation=True, returns AnswerWithEvaluation dict with answer + evaluation scores.
+    Otherwise returns answer string.
     """
     if auto_extract_filters:
         filters = extract_filters(question, llm)
@@ -111,4 +122,24 @@ def ask(
 
     chain = build_rag_chain(collection, embeddings, llm, filters, n_results)
     answer = chain.invoke(question)
-    return answer
+
+    if not evaluation:
+        return answer
+
+    from .retriever import retrieve
+    docs = retrieve(
+        question,
+        collection,
+        embeddings,
+        n_results=n_results,
+        branch=filters.get("branch"),
+        reviewer_location=filters.get("reviewer_location"),
+        season=filters.get("season"),
+        min_rating=filters.get("min_rating"),
+        year_month=filters.get("year_month"),
+        prefer_recent=filters.get("prefer_recent"),
+    )
+    context = format_docs(docs)
+
+    scores = evaluate_answer(question, answer, context, llm)
+    return AnswerWithEvaluation(answer=answer, evaluation=scores)

@@ -4,7 +4,8 @@ from .embeddings import SentenceTransformerEmbeddings
 from .vectorstore import get_or_build_collection, get_chroma_client
 from .retriever import retrieve
 from .filter_parser import extract_filters
-from .chain import ask, build_rag_chain
+from .chain import ask, build_rag_chain, AnswerWithEvaluation
+from .evaluation import evaluate_answer, EvaluationScores
 
 __all__ = [
     "load_reviews",
@@ -15,4 +16,7 @@ __all__ = [
     "extract_filters",
     "ask",
     "build_rag_chain",
+    "AnswerWithEvaluation",
+    "evaluate_answer",
+    "EvaluationScores",
 ]

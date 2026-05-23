@@ -27,6 +27,7 @@ rag-system-poc/
 ├── .env                       # Configuration (LLM settings)
 ├── chat.py                    # Interactive CLI for asking questions
 ├── test_filters.py            # Tests for filter parsing logic
+├── test_evaluation.py         # Tests for LLM-as-judge evaluation
 ├── data/
 │   └── DisneylandReviews.csv  # Visitor review dataset
 ├── chroma_db/                 # Persistent vector store (auto-generated)
@@ -110,6 +111,15 @@ rag-system-poc/
 - LLM response: ChatLiteLLM generates answer using context
 - Configurable: temperature, max_tokens, timeout
 
+### Evaluation (`src/rag/evaluation.py`)
+- LLM-as-judge evaluates answer quality on 4 metrics:
+  - **Relevance** (0-1): How well does the answer address the question?
+  - **Conciseness** (0-1): Is it appropriately brief?
+  - **Helpfulness** (0-1): How useful to someone seeking info?
+  - **Hallucination** (0-1): How much false/unsupported info? (0=none, 1=full hallucination)
+- Scores on discrete scale: [0, 0.2, 0.4, 0.6, 0.8, 1.0]
+- Enabled via config or `evaluation=True` parameter in `ask()`
+
 ### Interactive Chat (`chat.py`)
 - CLI loop: user enters question → extract filters → retrieve → generate answer
 - Shows number of matching reviews and query parameters
@@ -163,6 +173,9 @@ LLM_TIMEOUT = 120
 TOP_K_RETRIEVAL = 30           # Number of reviews to fetch
 PREFER_RECENT_BY_DEFAULT = True # Boost recent reviews
 
+# Evaluation
+EVALUATION_ENABLED = False     # Enable LLM-as-judge scoring
+
 # Filter defaults
 EMBED_BATCH_SIZE = 512
 CSV_ENCODING = "latin-1"
@@ -209,21 +222,38 @@ Use these skills with `/skill-name` for development:
 
 ## Environment Variables
 
-Create a `.env` file for local LLM configuration:
+Create a `.env` file for local configuration:
 ```bash
-# Override default LLM model
+# LLM Model & Behavior
 LLM_MODEL_NAME=litellm_proxy/openrouter/anthropic/claude-3-sonnet
-
-# Adjust LLM behavior
 LLM_TEMPERATURE=0.5
 LLM_MAX_TOKENS=2048
 LLM_TIMEOUT=180
+
+# Evaluation
+EVALUATION_ENABLED=true  # Enable LLM-as-judge scoring (default: false)
 
 # LiteLLM proxy (if using local proxy)
 LITELLM_PROXY_URL=http://localhost:8000
 ```
 
 Default LLM: `litellm_proxy/openrouter/openai/gpt-4-mini` (via OpenRouter)
+
+### Evaluation Output Format
+
+When `EVALUATION_ENABLED=true`, the chat shows evaluation scores for each answer:
+```
+✨ Answer:
+[Answer text here]
+
+📊 Evaluation Scores:
+   Relevance:    0.8
+   Conciseness:  0.6
+   Helpfulness:  0.8
+   Hallucination (↓ = better): 0.2
+```
+
+All scores are on [0, 0.2, 0.4, 0.6, 0.8, 1.0] scale. Higher is better for all metrics except hallucination (lower is better).
 
 ## Data
 
@@ -247,8 +277,8 @@ System extracts: `branch=California, season=summer, min_rating=4`
 - [x] RAG chain (retrieval + LLM synthesis)
 - [x] Interactive CLI chat
 - [x] Dashboard analytics (notebook with visualizations)
+- [x] LLM-as-judge evaluation (relevance, conciseness, helpfulness, hallucination)
 - [ ] Chunking strategy for longer reviews
-- [ ] Add LLM-as-judge evaluation
 - [ ] GitHub repository setup
 
 ## Python Version
