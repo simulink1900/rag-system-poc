@@ -26,8 +26,9 @@ rag-system-poc/
 ├── CLAUDE.md                  # This file (project guide)
 ├── .env                       # Configuration (LLM settings)
 ├── chat.py                    # Interactive CLI for asking questions
-├── test_filters.py            # Tests for filter parsing logic
-├── test_evaluation.py         # Tests for LLM-as-judge evaluation
+├── tests/
+│   ├── test_filters.py        # Tests for filter parsing logic
+│   └── test_evaluation.py     # Tests for LLM-as-judge evaluation
 ├── data/
 │   └── DisneylandReviews.csv  # Visitor review dataset
 ├── chroma_db/                 # Persistent vector store (auto-generated)
