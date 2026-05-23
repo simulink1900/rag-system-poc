@@ -12,7 +12,7 @@ uv sync
 
 # Set environment variables (optional)
 export LITELLM_MASTER_KEY=your_key
-export LITELLM_PROXY_URL=https://litellm.gke-prod.linnovate.net
+export LITELLM_PROXY_URL=your_url
 ```
 
 ### Run Interactive Chat
