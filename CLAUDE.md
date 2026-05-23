@@ -72,11 +72,40 @@ uv sync --extra dev
 ```
 
 ### Coding Guidelines
-Follow the **karpathy-guidelines** skill:
-1. **Think before coding** - Surface assumptions, don't hide confusion
-2. **Simplicity first** - Minimum code, no speculative features
-3. **Surgical changes** - Touch only what you must
-4. **Goal-driven** - Define verifiable success criteria
+
+All code follows the **karpathy-guidelines** skill—behavioral guidelines to reduce common LLM coding mistakes. These bias toward caution over speed; use judgment for trivial tasks.
+
+#### 1. Think Before Coding
+Don't assume. Don't hide confusion. Surface tradeoffs.
+- State assumptions explicitly. Ask if uncertain.
+- Present multiple interpretations—don't pick silently.
+- Mention simpler approaches when they exist.
+- Stop and name what's confusing; don't proceed unclear.
+
+#### 2. Simplicity First
+Minimum code that solves the problem. Nothing speculative.
+- No features beyond what was asked.
+- No abstractions for single-use code.
+- No "flexibility" or "configurability" that wasn't requested.
+- No error handling for impossible scenarios.
+- If 200 lines could be 50, rewrite it.
+
+#### 3. Surgical Changes
+Touch only what you must. Clean up only your own mess.
+- Don't "improve" adjacent code, comments, or formatting.
+- Don't refactor things that aren't broken.
+- Match existing style, even if you'd do it differently.
+- Every changed line should trace directly to the user's request.
+- Remove only imports/variables/functions that YOUR changes made unused.
+
+#### 4. Goal-Driven Execution
+Define success criteria. Loop until verified.
+- Transform tasks into verifiable goals:
+  - "Add validation" → "Write tests for invalid inputs, then make them pass"
+  - "Fix the bug" → "Write a test that reproduces it, then make it pass"
+  - "Refactor X" → "Ensure tests pass before and after"
+- For multi-step tasks, state a brief plan with verification steps.
+- Strong success criteria let work proceed independently; weak criteria require constant clarification.
 
 ## Claude Code Skills
 
