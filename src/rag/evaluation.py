@@ -1,8 +1,10 @@
 import json
+import os
 from typing import TypedDict
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_litellm import ChatLiteLLM
+from .config import LLMASAJUDGE_MODEL_NAME, LLM_TEMPERATURE, LLM_MAX_TOKENS, LLM_TIMEOUT
 
 
 class EvaluationScores(TypedDict):
@@ -47,13 +49,27 @@ def evaluate_answer(
     question: str,
     answer: str,
     context: str,
-    llm: ChatLiteLLM,
+    judge_llm: ChatLiteLLM | None = None,
 ) -> EvaluationScores:
     """
     Evaluate an answer using LLM-as-judge on 4 metrics.
     Returns scores on [0, 0.2, 0.4, 0.6, 0.8, 1.0] scale.
+
+    If judge_llm is not provided, creates one using LLMASAJUDGE_MODEL_NAME.
     """
-    chain = EVALUATION_PROMPT_TEMPLATE | llm | StrOutputParser()
+    if judge_llm is None:
+        proxy_url = os.getenv("LITELLM_PROXY_URL", "https://litellm.gke-prod.linnovate.net")
+        api_key = os.getenv("LITELLM_MASTER_KEY")
+        judge_llm = ChatLiteLLM(
+            model=LLMASAJUDGE_MODEL_NAME,
+            api_base=proxy_url,
+            api_key=api_key,
+            temperature=LLM_TEMPERATURE,
+            max_tokens=LLM_MAX_TOKENS,
+            timeout=LLM_TIMEOUT,
+        )
+
+    chain = EVALUATION_PROMPT_TEMPLATE | judge_llm | StrOutputParser()
 
     response = chain.invoke(
         {

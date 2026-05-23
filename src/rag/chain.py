@@ -9,7 +9,8 @@ from .embeddings import SentenceTransformerEmbeddings
 from .retriever import retrieve
 from .filter_parser import extract_filters, ReviewFilters
 from .evaluation import evaluate_answer, EvaluationScores
-from .config import TOP_K_RETRIEVAL
+from .config import TOP_K_RETRIEVAL, LLMASAJUDGE_MODEL_NAME, LLM_TEMPERATURE, LLM_MAX_TOKENS, LLM_TIMEOUT
+import os
 
 
 RAG_PROMPT_TEMPLATE = ChatPromptTemplate.from_messages(
@@ -141,5 +142,17 @@ def ask(
     )
     context = format_docs(docs)
 
-    scores = evaluate_answer(question, answer, context, llm)
+    # Create judge LLM for evaluation
+    proxy_url = os.getenv("LITELLM_PROXY_URL", "https://litellm.gke-prod.linnovate.net")
+    api_key = os.getenv("LITELLM_MASTER_KEY")
+    judge_llm = ChatLiteLLM(
+        model=LLMASAJUDGE_MODEL_NAME,
+        api_base=proxy_url,
+        api_key=api_key,
+        temperature=LLM_TEMPERATURE,
+        max_tokens=LLM_MAX_TOKENS,
+        timeout=LLM_TIMEOUT,
+    )
+
+    scores = evaluate_answer(question, answer, context, judge_llm)
     return AnswerWithEvaluation(answer=answer, evaluation=scores)

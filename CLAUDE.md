@@ -119,6 +119,7 @@ rag-system-poc/
   - **Helpfulness** (0-1): How useful to someone seeking info?
   - **Hallucination** (0-1): How much false/unsupported info? (0=none, 1=full hallucination)
 - Scores on discrete scale: [0, 0.2, 0.4, 0.6, 0.8, 1.0]
+- Uses dedicated judge LLM (default: `litellm_proxy/openrouter/google/gemma-4-26b-a4b-it`, configurable via `LLMASAJUDGE_MODEL_NAME`)
 - Enabled via config or `evaluation=True` parameter in `ask()`
 
 ### Interactive Chat (`chat.py`)
@@ -176,6 +177,7 @@ PREFER_RECENT_BY_DEFAULT = True # Boost recent reviews
 
 # Evaluation
 EVALUATION_ENABLED = False     # Enable LLM-as-judge scoring
+LLMASAJUDGE_MODEL_NAME = "litellm_proxy/openrouter/google/gemma-4-26b-a4b-it"  # Model for evaluation
 
 # Filter defaults
 EMBED_BATCH_SIZE = 512
@@ -192,6 +194,7 @@ Override via environment variables:
 export LLM_MODEL_NAME="litellm_proxy/openrouter/anthropic/claude-3-sonnet"
 export LLM_TEMPERATURE="0.5"
 export LLM_MAX_TOKENS="2048"
+export LLMASAJUDGE_MODEL_NAME="litellm_proxy/openrouter/google/gemma-4-26b-a4b-it"
 ```
 
 ### Coding Guidelines
@@ -225,7 +228,7 @@ Use these skills with `/skill-name` for development:
 
 Create a `.env` file for local configuration:
 ```bash
-# LLM Model & Behavior
+# Main LLM (for question answering)
 LLM_MODEL_NAME=litellm_proxy/openrouter/anthropic/claude-3-sonnet
 LLM_TEMPERATURE=0.5
 LLM_MAX_TOKENS=2048
@@ -233,12 +236,15 @@ LLM_TIMEOUT=180
 
 # Evaluation
 EVALUATION_ENABLED=true  # Enable LLM-as-judge scoring (default: false)
+LLMASAJUDGE_MODEL_NAME=litellm_proxy/openrouter/google/gemma-4-26b-a4b-it  # Model for evaluation
 
 # LiteLLM proxy (if using local proxy)
 LITELLM_PROXY_URL=http://localhost:8000
 ```
 
-Default LLM: `litellm_proxy/openrouter/openai/gpt-4-mini` (via OpenRouter)
+**Default models:**
+- Main LLM: `litellm_proxy/openrouter/openai/gpt-4-mini`
+- Judge LLM: `litellm_proxy/openrouter/google/gemma-4-26b-a4b-it`
 
 ### Evaluation Output Format
 

@@ -6,9 +6,9 @@ Test the LLM-as-judge evaluation module.
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent / "src"))
+sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from rag.config import LLM_MODEL_NAME, LLM_TEMPERATURE, LLM_MAX_TOKENS, LLM_TIMEOUT
+from rag.config import LLMASAJUDGE_MODEL_NAME, LLM_TEMPERATURE, LLM_MAX_TOKENS, LLM_TIMEOUT
 from rag.evaluation import evaluate_answer, EvaluationScores
 from langchain_litellm import ChatLiteLLM
 import os
@@ -16,11 +16,11 @@ import os
 
 def test_evaluation():
     """Test evaluation with mock data."""
-    # Setup LLM
+    # Setup judge LLM
     proxy_url = os.getenv("LITELLM_PROXY_URL", "https://litellm.gke-prod.linnovate.net")
     api_key = os.getenv("LITELLM_MASTER_KEY")
-    llm = ChatLiteLLM(
-        model=LLM_MODEL_NAME,
+    judge_llm = ChatLiteLLM(
+        model=LLMASAJUDGE_MODEL_NAME,
         api_base=proxy_url,
         api_key=api_key,
         temperature=LLM_TEMPERATURE,
@@ -43,7 +43,7 @@ Too crowded in July. Long wait times. Park was still enjoyable."""
     print()
 
     try:
-        scores = evaluate_answer(question, answer, context, llm)
+        scores = evaluate_answer(question, answer, context, judge_llm)
         print("✅ Evaluation successful!")
         print(f"\nEvaluation Scores:")
         print(f"  Relevance:     {scores['relevance']:.1f}")

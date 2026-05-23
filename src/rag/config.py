@@ -17,6 +17,9 @@ LLM_TEMPERATURE: float = float(os.getenv("LLM_TEMPERATURE", "0.7"))
 LLM_MAX_TOKENS: int = int(os.getenv("LLM_MAX_TOKENS", "1024"))
 LLM_TIMEOUT: int = int(os.getenv("LLM_TIMEOUT", "120"))
 
+# LLM for Evaluation (LLM-as-a-judge)
+LLMASAJUDGE_MODEL_NAME: str = os.getenv("LLMASAJUDGE_MODEL_NAME", "litellm_proxy/openrouter/google/gemma-4-26b-a4b-it")
+
 # Filter Extraction
 PREFER_RECENT_BY_DEFAULT: bool = True
 
