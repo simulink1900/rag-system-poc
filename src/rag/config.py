@@ -11,6 +11,15 @@ COLLECTION_NAME: str = "disneyland_reviews"
 
 EMBEDDING_MODEL_NAME: str = "all-MiniLM-L6-v2"
 LLM_MODEL_NAME: str = os.getenv("LLM_MODEL_NAME", "litellm_proxy/openrouter/openai/gpt-4.1-mini")
+
+# LLM Parameters
+LLM_TEMPERATURE: float = float(os.getenv("LLM_TEMPERATURE", "0.7"))
+LLM_MAX_TOKENS: int = int(os.getenv("LLM_MAX_TOKENS", "1024"))
+LLM_TIMEOUT: int = int(os.getenv("LLM_TIMEOUT", "120"))
+
+# Filter Extraction
+PREFER_RECENT_BY_DEFAULT: bool = True
+
 EMBED_BATCH_SIZE: int = 512
 TOP_K_RETRIEVAL: int = 30
 CSV_ENCODING: str = "latin-1"

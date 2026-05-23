@@ -9,7 +9,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent / "src"))
 
-from rag.config import DATA_PATH, LLM_MODEL_NAME
+from rag.config import DATA_PATH, LLM_MODEL_NAME, LLM_TEMPERATURE, LLM_MAX_TOKENS, LLM_TIMEOUT
 from rag.ingest import load_reviews
 from rag.embeddings import SentenceTransformerEmbeddings
 from rag.vectorstore import get_or_build_collection
@@ -45,10 +45,13 @@ def main():
         model=LLM_MODEL_NAME,
         api_base=proxy_url,
         api_key=api_key,
-        timeout=120,
+        temperature=LLM_TEMPERATURE,
+        max_tokens=LLM_MAX_TOKENS,
+        timeout=LLM_TIMEOUT,
     )
     print(f"    Connected to {proxy_url}")
     print(f"    Using model: {LLM_MODEL_NAME}")
+    print(f"    Temperature: {LLM_TEMPERATURE}, Max tokens: {LLM_MAX_TOKENS}")
 
     print("\n" + "=" * 70)
     print("Ready! Ask questions about Disneyland visitor experiences.")
@@ -85,6 +88,9 @@ def main():
             print(f"   Branch: {filters.get('branch') or 'any'}")
             print(f"   Location: {filters.get('reviewer_location') or 'any'}")
             print(f"   Season: {filters.get('season') or 'any'}")
+            print(f"   Rating: {filters.get('min_rating') or 'any'}")
+            print(f"   Year/Month: {filters.get('year_month') or 'any'}")
+            print(f"   Prefer Recent: {filters.get('prefer_recent', False)}")
 
             # Get answer
             answer = ask(question, collection, embeddings, llm, auto_extract_filters=False, filters=filters)

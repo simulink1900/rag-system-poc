@@ -4,12 +4,12 @@
 import sys
 from pathlib import Path
 import os
-import json
 
 sys.path.insert(0, str(Path(__file__).parent / "src"))
 
 from langchain_litellm import ChatLiteLLM
-from rag.config import LLM_MODEL_NAME
+from rag.config import LLM_MODEL_NAME, LLM_TEMPERATURE, LLM_MAX_TOKENS, LLM_TIMEOUT
+from rag.filter_parser import extract_filters
 
 # Initialize LLM
 proxy_url = os.getenv("LITELLM_PROXY_URL", "https://litellm.gke-prod.linnovate.net")
@@ -19,7 +19,9 @@ llm = ChatLiteLLM(
     model=LLM_MODEL_NAME,
     api_base=proxy_url,
     api_key=api_key,
-    timeout=120,
+    temperature=LLM_TEMPERATURE,
+    max_tokens=LLM_MAX_TOKENS,
+    timeout=LLM_TIMEOUT,
 )
 
 # Test questions
@@ -28,6 +30,7 @@ test_questions = [
     "Is spring a good time to visit Disneyland?",
     "Is Disneyland California usually crowded in June?",
     "Is the staff in Paris friendly?",
+    "What are recent positive reviews from 2023?",
 ]
 
 print("Testing filter extraction...\n")
@@ -36,34 +39,10 @@ for question in test_questions:
     print(f"Question: {question}")
     print("-" * 70)
 
-    prompt = f"""Extract metadata filters from this Disneyland question.
-Return ONLY valid JSON with keys: branch, reviewer_location, season. No other text.
-- branch: one of "Disneyland_California", "Disneyland_HongKong", "Disneyland_Paris", or null
-- reviewer_location: country/region string or null
-- season: "spring", "summer", "autumn", "winter", or null
+    filters = extract_filters(question, llm)
 
-Question: {question}
-
-JSON:"""
-
-    response = llm.invoke(prompt)
-    response_text = response.content.strip()
-
-    print(f"Raw LLM Response:\n{response_text}\n")
-
-    # Try to parse JSON
-    json_start = response_text.find("{")
-    json_end = response_text.rfind("}") + 1
-
-    if json_start != -1 and json_end > json_start:
-        json_str = response_text[json_start:json_end]
-        print(f"Extracted JSON:\n{json_str}\n")
-        try:
-            parsed = json.loads(json_str)
-            print(f"Parsed: {parsed}\n")
-        except json.JSONDecodeError as e:
-            print(f"JSON parse error: {e}\n")
-    else:
-        print("No JSON found in response\n")
+    print(f"Extracted filters:")
+    for key, value in filters.items():
+        print(f"  {key}: {value}")
 
     print("=" * 70 + "\n")
