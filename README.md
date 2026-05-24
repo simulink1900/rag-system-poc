@@ -27,6 +27,51 @@ Example questions:
 - "Is Disneyland California usually crowded in June?"
 - "Is the staff in Paris friendly?"
 
+#### Example: With Evaluation Enabled
+
+```
+📝 Question: I don't like to wait in the line, what is the best time of the year to visit Disney California?
+
+🔍 Extracted filters:
+   Branch: Disneyland_California
+   Location: any
+   Season: any
+   Rating: 4
+   Prefer Recent: True
+
+✨ Answer:
+Based on the visitor reviews, the best times of the year to visit Disneyland 
+California to avoid long lines and crowds are:
+
+- March (early spring)
+- October
+- The week after Thanksgiving (late November)
+- Early May on weekdays (Thursday and Friday)
+- February, which has great weather and no crowds
+- Early June, especially the first week, when lines are shorter in the mornings
+- January, avoiding the first week which is very crowded
+- Visiting during the week rather than weekends to avoid long lines
+
+Additionally, arriving early (by 8:00 a.m.) to get on popular attractions 
+before the crowds arrive is recommended. Staying until closing can also help, 
+as lines tend to be shorter in the last hour or later in the evening.
+
+Using FastPass or MaxPass systems also helps reduce wait times significantly.
+
+Avoid summer (July) and major holidays like Christmas and New Year's Eve if 
+you want to minimize wait times, as these times tend to be very busy.
+
+In summary, the best strategy is to visit in shoulder seasons like March, 
+October, February, or the week after Thanksgiving, go on weekdays, arrive 
+early, and stay late.
+
+📊 Evaluation Scores:
+   Relevance:    1.0
+   Conciseness:  1.0
+   Helpfulness:  1.0
+   Hallucination (↓ = better): 0.0
+```
+
 ### Run Jupyter Notebooks
 
 ```bash
