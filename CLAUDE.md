@@ -274,19 +274,28 @@ Example query:
 ```
 System extracts: `branch=California, season=summer, min_rating=4`
 
-## Next Steps
+## Completed Features
 
 - [x] Data ingestion from CSV
 - [x] Embedding model setup (sentence-transformers)
-- [x] Vector storage (ChromaDB)
+- [x] Vector storage (ChromaDB with persistence)
 - [x] Filter extraction from natural language (LLM-based)
-- [x] Retrieval with filtering and ranking
+- [x] Retrieval with filtering, ranking, and recency bias
 - [x] RAG chain (retrieval + LLM synthesis)
 - [x] Interactive CLI chat
 - [x] Dashboard analytics (notebook with visualizations)
 - [x] LLM-as-judge evaluation (relevance, conciseness, helpfulness, hallucination)
-- [ ] Chunking strategy for longer reviews
-- [ ] GitHub repository setup
+- [x] Comprehensive test suite (filter parsing, evaluation)
+- [x] Type hints and configuration management
+
+## Future Enhancements
+
+- [ ] Chunking strategy for very long reviews
+- [ ] Web UI or REST API interface
+- [ ] Batch evaluation mode for benchmarking
+- [ ] Query result caching layer
+- [ ] Advanced filtering (date ranges, multi-location OR queries)
+- [ ] Semantic similarity clustering of reviews
 
 ## Python Version
 

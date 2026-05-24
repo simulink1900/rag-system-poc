@@ -247,12 +247,16 @@ pytest tests/test_evaluation.py -v
 - **Tested with**: Python 3.13.9
 - **Optional**: CUDA 13.0 for GPU-accelerated embeddings
 
-## Next Steps
+## Future Enhancements
 
-- [ ] Chunking strategy for longer reviews
-- [ ] GitHub repository setup
-- [ ] Multi-document answer synthesis
-- [ ] Caching layer for frequent queries
+- [ ] Chunking strategy for very long reviews
+- [ ] Web UI or REST API interface
+- [ ] Batch evaluation mode for benchmarking
+- [ ] Query result caching layer
+- [ ] Advanced filtering (date ranges, multi-location OR queries)
+- [ ] Semantic similarity clustering of reviews
+
+See `CLAUDE.md` for full feature list and development guide.
 
 ## License
 
