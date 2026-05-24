@@ -62,9 +62,16 @@ This system combines three core capabilities:
 ### Data Pipeline
 
 ```
-CSV Load → Document Creation → Embedding Generation → Vector Storage
-   ↓            ↓                    ↓                      ↓
-raw reviews  LangChain Docs   sentence-transformers   ChromaDB
+┌─────────────────────────────────────────────────────────────────────────┐
+│                                                                           │
+│  ┌──────────┐    ┌─────────────┐    ┌──────────────┐    ┌────────────┐ │
+│  │ CSV Load │ ─→ │  Document   │ ─→ │  Embedding   │ ─→ │   Vector   │ │
+│  │          │    │ Creation    │    │ Generation   │    │  Storage   │ │
+│  └──────────┘    └─────────────┘    └──────────────┘    └────────────┘ │
+│   42K reviews    LangChain Docs   sentence-transformers    ChromaDB     │
+│                                     (384-dim vectors)     persistent DB  │
+│                                                                           │
+└─────────────────────────────────────────────────────────────────────────┘
 ```
 
 ## Architecture & Pipelines
@@ -124,19 +131,31 @@ raw reviews  LangChain Docs   sentence-transformers   ChromaDB
 
 ### 8. Interactive Chat Loop (`chat.py`)
 ```
-User Question
-    ↓
-Filter Extraction (LLM)
-    ↓
-Display Extracted Filters
-    ↓
-Retrieval (Vector + Filters)
-    ↓
-RAG Chain (LLM Answer)
-    ↓
-[Optional] Evaluation (Judge LLM)
-    ↓
-Display Answer + Scores
+┌──────────────────────────────────────────────────────────────┐
+│                                                               │
+│                    📝 User Question                           │
+│                           ↓                                   │
+│              ┌────────────────────────┐                       │
+│              │  Filter Extraction     │ (LLM analyzes query) │
+│              │  • Branch, Season      │                       │
+│              │  • Rating, Location    │                       │
+│              └────────────────────────┘                       │
+│                           ↓                                   │
+│          🔍 Vector Search + Metadata Filters                  │
+│             (Retrieve top-30 matching reviews)                │
+│                           ↓                                   │
+│              ┌────────────────────────┐                       │
+│              │  RAG Chain Synthesis   │ (LLM generates answer)│
+│              │  • Format context      │                       │
+│              │  • Generate response   │                       │
+│              └────────────────────────┘                       │
+│                           ↓                                   │
+│          [Optional] ⚖️ Evaluation (Judge LLM)                 │
+│          Score: Relevance, Conciseness, Helpfulness, etc.    │
+│                           ↓                                   │
+│              ✨ Display Answer + Evaluation Scores            │
+│                                                               │
+└──────────────────────────────────────────────────────────────┘
 ```
 
 ## Features
