@@ -167,11 +167,11 @@ This system combines three core capabilities:
 
 ### 7. Evaluation Pipeline (`src/rag/evaluation.py`)
 - **Separate Judge LLM**: `litellm_proxy/openrouter/google/gemma-4-26b-a4b-it`
-- **4 Metrics** (0-1 scale, 0.2 increments):
-  - Relevance: How well does answer address question?
-  - Conciseness: Appropriately brief?
-  - Helpfulness: Useful to information seekers?
-  - Hallucination: False/unsupported info? (0=none, 1=full)
+- **4 Metrics** (0-1 continuous scale, 0.2 increments):
+  - **Relevance**: Extent to which information addresses the specific question asked, enhancing user comprehension while staying focused without extraneous details
+  - **Conciseness**: Whether answer directly and succinctly responds without unnecessary, irrelevant, or excessive details
+  - **Helpfulness**: How effectively the answer addresses the query with accurate, relevant information in a friendly and engaging manner that assists understanding
+  - **Hallucination**: Degree of false/unsupported information that doesn't align with established knowledge, verifiable data, or logical inference (0=none, 1=full)
 - **Output**: EvaluationScores dict
 
 ### 8. Interactive Chat Loop (`chat.py`)

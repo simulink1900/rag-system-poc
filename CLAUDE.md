@@ -113,11 +113,11 @@ rag-system-poc/
 - Configurable: temperature, max_tokens, timeout
 
 ### Evaluation (`src/rag/evaluation.py`)
-- LLM-as-judge evaluates answer quality on 4 metrics:
-  - **Relevance** (0-1): How well does the answer address the question?
-  - **Conciseness** (0-1): Is it appropriately brief?
-  - **Helpfulness** (0-1): How useful to someone seeking info?
-  - **Hallucination** (0-1): How much false/unsupported info? (0=none, 1=full hallucination)
+- LLM-as-judge evaluates answer quality on 4 metrics (0-1 continuous scale, 0.2 increments):
+  - **Relevance**: How well the answer addresses the specific question, enhancing user comprehension without straying into unrelated areas or extraneous details
+  - **Conciseness**: Whether the answer directly and succinctly responds to the question without unnecessary, irrelevant, or excessive details
+  - **Helpfulness**: How effectively the answer addresses the query with accurate, relevant information in a friendly and engaging manner that assists user understanding
+  - **Hallucination**: Degree to which the answer contains false/unsupported information that doesn't align with established knowledge, verifiable data, or logical inference (0=none, 1=full hallucination)
 - Scores on discrete scale: [0, 0.2, 0.4, 0.6, 0.8, 1.0]
 - Uses dedicated judge LLM (default: `litellm_proxy/openrouter/google/gemma-4-26b-a4b-it`, configurable via `LLMASAJUDGE_MODEL_NAME`)
 - Enabled via config or `evaluation=True` parameter in `ask()`
